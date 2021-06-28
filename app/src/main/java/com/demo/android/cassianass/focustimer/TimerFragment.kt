@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.demo.android.cassianass.focustimer.databinding.FragmentTimerBinding
+import com.demo.android.cassianass.focustimer.util.ExtensionFunctions.changeType
 import com.demo.android.cassianass.focustimer.viewmodel.SharedViewModel
 
 class TimerFragment : Fragment() {
@@ -24,17 +25,21 @@ class TimerFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentTimerBinding.inflate(inflater, container, false)
 
-        binding.startButton.setOnClickListener {
-            startCounter()
-        }
+        observeCounter()
+        sharedViewModel.startTime.observe(viewLifecycleOwner, { started ->
+            binding.startButton.changeType(started)
+
+            binding.startButton.setOnClickListener {
+                sharedViewModel.controlStatus()
+            }
+        })
 
         return binding.root
     }
 
-    private fun startCounter() {
-        sharedViewModel.startCounting(30000, requireContext())
+    private fun observeCounter() {
         sharedViewModel.timer.observe(viewLifecycleOwner, { realTime ->
-            binding.progressTextView.text = realTime.toString()
+            binding.progressTextView.text = realTime
         })
         sharedViewModel.porcentage.observe(viewLifecycleOwner,{ value ->
             binding.progressBar.progress = value
