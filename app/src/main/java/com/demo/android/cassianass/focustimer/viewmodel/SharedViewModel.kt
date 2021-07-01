@@ -4,18 +4,23 @@ import android.os.CountDownTimer
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.demo.android.cassianass.focustimer.TimerStatus
+import com.demo.android.cassianass.focustimer.model.TimeModel
+import com.demo.android.cassianass.focustimer.model.TimerStatus
 import java.util.concurrent.TimeUnit
+
 
 class SharedViewModel: ViewModel() {
 
     var timer = MutableLiveData<String>()
-    var millisInFuture = MutableLiveData<Long>(90000)
     var pausedTime = MutableLiveData<Long>()
     var porcentage = MutableLiveData<Int>()
     var startTime = MutableLiveData(TimerStatus.START)
+    var timeModel = TimeModel(90000, 1000, 0)
     private lateinit var countDownTimer: CountDownTimer
 
+    init {
+        setValuesToProgressAndText(timeModel.time)
+    }
 
     private fun countDownTimer(millisInFuture: Long) {
 
@@ -23,30 +28,29 @@ class SharedViewModel: ViewModel() {
 
             override fun onTick(millisUntilFinished: Long) {
                 pausedTime.value = millisUntilFinished
-                Log.d("ValorTImerAtual", pausedTime.value.toString())
-                convertInMinuteAndSeconds(millisUntilFinished)
-                convertTimeToPorcentage(pausedTime.value!!, 90000)
+                setValuesToProgressAndText(millisUntilFinished)
             }
 
             override fun onFinish() {
                 startTime.value = TimerStatus.START
+                setValuesToProgressAndText(timeModel.time)
             }
         }
     }
 
-    fun startCounting() {
-        countDownTimer(millisInFuture.value!!)
+    private fun startCounting() {
+        countDownTimer(timeModel.time)
         countDownTimer.start()
         startTime.value = TimerStatus.RESUME
     }
 
-    fun pauseCounting(){
+    private fun pauseCounting(){
         countDownTimer.cancel()
         //convertInMinuteAndSeconds(pausedTime.value!!)
         startTime.value = TimerStatus.PAUSE
     }
 
-    fun resumeCounting(){
+    private fun resumeCounting(){
         countDownTimer(pausedTime.value!!)
         Log.d("MilliFutureDepois", pausedTime.value.toString())
         countDownTimer.start()
@@ -60,6 +64,23 @@ class SharedViewModel: ViewModel() {
             TimerStatus.RESUME -> pauseCounting()
         }
         Log.d("Status", startTime.value.toString())
+    }
+
+    fun controlStatusWhenCallOptions(){
+        if(startTime.value == TimerStatus.RESUME){
+            pauseCounting()
+        }
+    }
+
+    fun setNewTimer(newValue: TimeModel){
+        timeModel = newValue
+        setValuesToProgressAndText(timeModel.time)
+        startTime.value = TimerStatus.START
+    }
+
+    private fun setValuesToProgressAndText(timeLive: Long) {
+        convertInMinuteAndSeconds(timeLive)
+        convertTimeToPorcentage(timeLive, timeModel.time)
     }
 
     private fun convertInMinuteAndSeconds(millis: Long){

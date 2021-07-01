@@ -1,15 +1,17 @@
 package com.demo.android.cassianass.focustimer
 
+
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.demo.android.cassianass.focustimer.databinding.FragmentTimerBinding
 import com.demo.android.cassianass.focustimer.util.ExtensionFunctions.changeType
 import com.demo.android.cassianass.focustimer.viewmodel.SharedViewModel
+
 
 class TimerFragment : Fragment() {
 
@@ -25,7 +27,9 @@ class TimerFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentTimerBinding.inflate(inflater, container, false)
 
-        observeCounter()
+        binding.sharedViewModel = sharedViewModel
+        binding.lifecycleOwner = this
+
         sharedViewModel.startTime.observe(viewLifecycleOwner, { started ->
             binding.startButton.changeType(started)
 
@@ -34,19 +38,17 @@ class TimerFragment : Fragment() {
             }
         })
 
+        binding.progressBar.setOnClickListener {
+
+        }
+
+        binding.timerProgressTextView.setOnClickListener {
+            sharedViewModel.controlStatusWhenCallOptions()
+            findNavController().navigate(R.id.action_timerFragment_to_setTimeFragment)
+        }
+
         return binding.root
     }
-
-    private fun observeCounter() {
-        sharedViewModel.timer.observe(viewLifecycleOwner, { realTime ->
-            binding.progressTextView.text = realTime
-        })
-        sharedViewModel.porcentage.observe(viewLifecycleOwner,{ value ->
-            binding.progressBar.progress = value
-            Log.d("Porcentagem", value.toString())
-        })
-    }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
