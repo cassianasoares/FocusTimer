@@ -32,8 +32,7 @@ class SharedViewModel: ViewModel() {
             }
 
             override fun onFinish() {
-                startTime.value = TimerStatus.START
-                setValuesToProgressAndText(timeModel.time)
+                startTime.value = TimerStatus.FINISH
             }
         }
     }
@@ -62,6 +61,7 @@ class SharedViewModel: ViewModel() {
             TimerStatus.START -> startCounting()
             TimerStatus.PAUSE -> resumeCounting()
             TimerStatus.RESUME -> pauseCounting()
+            TimerStatus.FINISH -> startCounting()
         }
         Log.d("Status", startTime.value.toString())
     }

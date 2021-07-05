@@ -27,9 +27,7 @@ class SetTimeFragment  : BottomSheetDialogFragment() {
     ): View {
         _binding = FragmentSetTimeBinding.inflate(inflater, container, false)
 
-
         binding.setNewTimeButton.setOnClickListener {
-            //sharedViewModel.setNewTimer()
             val checkedChipTimeGroup = binding.timeChipGroup.getSelectedTime()
             val checkedChipSessionGroup = binding.sessionChipGroup.getSelectedSession()
             sharedViewModel.setNewTimer(TimeModel( checkedChipTimeGroup[0], checkedChipTimeGroup[1], checkedChipSessionGroup))

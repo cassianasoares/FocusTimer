@@ -7,98 +7,98 @@
     tools:context=".SetTimeFragment"
     android:orientation="vertical">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Tempo do Pomodoro:"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="8dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tempo do Pomodoro:"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="8dp" />
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/time_chipGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        app:selectionRequired="true"
-        app:singleSelection="true"
-        app:checkedChip="@+id/time25_chip">
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/time25_chip"
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/time_chipGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="25 min"/>
+            android:layout_marginStart="16dp"
+            app:selectionRequired="true"
+            app:singleSelection="true"
+            app:checkedChip="@+id/time25_chip">
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/time30_chip"
+            <com.google.android.material.chip.Chip
+                android:id="@+id/time25_chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="25 min" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/time30_chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="30 min" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/time40_chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="40 min" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/time50_chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="50 min" />
+        </com.google.android.material.chip.ChipGroup>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Quantidade de Sessões:"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/session_chipGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="30 min"/>
+            android:layout_marginStart="16dp"
+            app:selectionRequired="false"
+            app:singleSelection="true">
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/time40_chip"
-            android:layout_width="wrap_content"
+            <com.google.android.material.chip.Chip
+                android:id="@+id/session1_chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1 Sessão" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/session2_chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2 Sessões" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/session3_chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3 Sessões" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/session4_chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="4 Sessões" />
+        </com.google.android.material.chip.ChipGroup>
+
+        <Button
+            android:id="@+id/setNewTime_button"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="40 min"/>
+            android:text="Start"
+            android:layout_margin="16dp" />
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/time50_chip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="50 min"/>
-    </com.google.android.material.chip.ChipGroup>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Quantidade de Sessões:"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"/>
-
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/session_chipGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        app:selectionRequired="false"
-        app:singleSelection="true">
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/session1_chip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="1 Sessão"/>
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/session2_chip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="2 Sessões"/>
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/session3_chip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="3 Sessões"/>
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/session4_chip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="4 Sessões"/>
-    </com.google.android.material.chip.ChipGroup>
-
-    <Button
-        android:id="@+id/setNewTime_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Start"
-        android:layout_margin="16dp"/>
-
-</LinearLayout>
+    </LinearLayout>

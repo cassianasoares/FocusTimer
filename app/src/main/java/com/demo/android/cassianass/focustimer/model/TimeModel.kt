@@ -10,5 +10,5 @@ data class TimeModel (var time: Long,
 
 
 enum class TimerStatus {
-    START, PAUSE, RESUME
+    START, PAUSE, RESUME, FINISH
 }
