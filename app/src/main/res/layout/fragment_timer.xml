@@ -5,8 +5,8 @@
 
     <data>
         <variable
-            name="sharedViewModel"
-            type="com.demo.android.cassianass.focustimer.viewmodel.SharedViewModel" />
+            name="fragmentTimer"
+            type="com.demo.android.cassianass.focustimer.TimerFragment" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,10 +16,11 @@
 
         <ProgressBar
             android:id="@+id/progress_bar"
+            style="@style/CircularDeterminateProgressBar"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            style="@style/CircularDeterminateProgressBar"
-            android:progress="@{sharedViewModel.porcentage}"
+            timeCurrent="@{fragmentTimer.timeLive}"
+            timeTotal="@{fragmentTimer.timeTotal}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -30,22 +31,34 @@
             android:id="@+id/timerProgress_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            convertInMinuteAndSeconds="@{fragmentTimer.timeLive}"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             app:layout_constraintBottom_toBottomOf="@+id/progress_bar"
             app:layout_constraintEnd_toEndOf="@+id/progress_bar"
             app:layout_constraintStart_toStartOf="@+id/progress_bar"
-            app:layout_constraintTop_toTopOf="@+id/progress_bar"
-            android:text="@{sharedViewModel.timer}" />
+            app:layout_constraintTop_toTopOf="@+id/progress_bar" />
 
         <Button
             android:id="@+id/start_button"
+            android:text="START"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            changeType="@{sharedViewModel.startTime}"
-            android:onClick="@{() -> sharedViewModel.controlStatus()}"
+            android:onClick="@{() -> fragmentTimer.sendActionCommandToService()}"
             app:layout_constraintEnd_toEndOf="@+id/progress_bar"
             app:layout_constraintStart_toStartOf="@+id/progress_bar"
             app:layout_constraintTop_toBottomOf="@+id/progress_bar" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="STOP"
+            android:onClick="@{() -> fragmentTimer.sendActionCommandToServiceStop()}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/start_button" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
