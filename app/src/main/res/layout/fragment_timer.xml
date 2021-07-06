@@ -40,25 +40,14 @@
 
         <Button
             android:id="@+id/start_button"
-            android:text="START"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="@{() -> fragmentTimer.sendActionCommandToService()}"
+            changeType="@{fragmentTimer.startTime}"
+            android:onClick="@{() -> fragmentTimer.sendActionCommandToService(fragmentTimer.startTime)}"
             app:layout_constraintEnd_toEndOf="@+id/progress_bar"
             app:layout_constraintStart_toStartOf="@+id/progress_bar"
             app:layout_constraintTop_toBottomOf="@+id/progress_bar" />
 
-        <Button
-            android:id="@+id/button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="STOP"
-            android:onClick="@{() -> fragmentTimer.sendActionCommandToServiceStop()}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/start_button" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

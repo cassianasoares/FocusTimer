@@ -3,6 +3,7 @@ package com.demo.android.cassianass.focustimer
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,10 +12,13 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
 import com.demo.android.cassianass.focustimer.databinding.FragmentTimerBinding
+import com.demo.android.cassianass.focustimer.model.TimeModel
+import com.demo.android.cassianass.focustimer.model.TimerStatus
 import com.demo.android.cassianass.focustimer.service.TimerService
 import com.demo.android.cassianass.focustimer.util.Constant.ACTION_SERVICE_START
 import com.demo.android.cassianass.focustimer.util.Constant.ACTION_SERVICE_STOP
 import com.demo.android.cassianass.focustimer.viewmodel.SharedViewModel
+import java.sql.Time
 
 
 class TimerFragment : Fragment() {
@@ -24,8 +28,11 @@ class TimerFragment : Fragment() {
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
 
-    var timeLive = MutableLiveData<Long>()
-    var timeTotal= MutableLiveData<Long>()
+    var timeLive = MutableLiveData<Long>(90000)
+    var timeTotal=  MutableLiveData<Long>(90000)
+    lateinit var timeModel: TimeModel
+    var startTime = MutableLiveData(TimerStatus.START)
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,7 +43,7 @@ class TimerFragment : Fragment() {
 
         binding.fragmentTimer = this
         binding.lifecycleOwner = this
-        observes()
+
 
         binding.timerProgressTextView.setOnClickListener {
             findNavController().navigate(R.id.action_timerFragment_to_setTimeFragment)
@@ -45,36 +52,37 @@ class TimerFragment : Fragment() {
         return binding.root
     }
 
-    private fun observes(){
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
         sharedViewModel.timeModel.observe(viewLifecycleOwner, {newTime ->
-            TimerService.timeModel = newTime
+            timeModel = newTime
+            timeTotal.value = newTime.time
+            Log.d("TimeTotalFrag", timeTotal.toString())
         })
         TimerService.pausedTime.observe(viewLifecycleOwner, {atualTime ->
-            timeLive.value = atualTime
+            if (atualTime != null) {
+                timeLive.value = atualTime
+            }else{
+                timeLive.value = timeTotal.value
+            }
         })
-        timeTotal.value =TimerService.timeModel.time
+        TimerService.startTime.observe(viewLifecycleOwner, { status ->
+            startTime.value = status
+            Log.d("Status", status.toString())
+        })
+        super.onViewCreated(view, savedInstanceState)
     }
 
-    fun sendActionCommandToService(){
-        //val action = if(status == TimerStatus.FINISH) ACTION_SERVICE_STOP else ACTION_SERVICE_START
+
+    fun sendActionCommandToService(status: TimerStatus){
+        val action = if(status == TimerStatus.RESUME) ACTION_SERVICE_STOP else ACTION_SERVICE_START
 
         Intent(
             requireContext(),
             TimerService::class.java
         ).apply{
-            this.action = ACTION_SERVICE_START
-            requireContext().startService(this)
-        }
-    }
-
-    fun sendActionCommandToServiceStop(){
-        //val action = if(status == TimerStatus.FINISH) ACTION_SERVICE_STOP else ACTION_SERVICE_START
-
-        Intent(
-            requireContext(),
-            TimerService::class.java
-        ).apply{
-            this.action = ACTION_SERVICE_STOP
+            this.putExtra("timeValue", timeModel)
+            this.action = action
             requireContext().startService(this)
         }
     }
