@@ -9,6 +9,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.CountDownTimer
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
@@ -31,14 +32,20 @@ class TimerService: LifecycleService() {
     private lateinit var intent: Intent
     private lateinit var pendingIntent: PendingIntent
     private lateinit var countDownTimer : CountDownTimer
+    private lateinit var timeModel: TimeModel
+    private var startInterval = MutableLiveData(true)
+    private var list = arrayOf<Long>()
 
 
     companion object {
         var startTime = MutableLiveData(TimerStatus.START)
+        var totalTimeAtual = MutableLiveData<Long>()
         var pausedTime = MutableLiveData<Long>()
+        var interval=  MutableLiveData<Int>()
     }
 
     override fun onCreate() {
+
         notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
 
         (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).also {
@@ -60,12 +67,14 @@ class TimerService: LifecycleService() {
                 ACTION_SERVICE_START -> {
                     startForegroundService()
                     setTimerValues(it)
-                    startCounting()
+                    startCounting(list[0])
                 }
                 ACTION_SERVICE_REDEFINED -> {
                     stopForegroundService()
+                    if(startTime.value == TimerStatus.RESUME) {
+                        stopCounting()
+                    }
                     setTimerValues(it)
-                    stopCounting()
                     startTime.value = TimerStatus.START
                 }
                 ACTION_SERVICE_STOP ->{
@@ -81,25 +90,71 @@ class TimerService: LifecycleService() {
     }
 
     private fun setTimerValues(intent: Intent?){
-        val timeModel: TimeModel = intent!!.getParcelableExtra("timeValue")!!
+        timeModel= intent!!.getParcelableExtra("timeValue")!!
+        totalTimeAtual.value = timeModel.time
         pausedTime.value = timeModel.time
-        countDownTimer = object : CountDownTimer(timeModel.time, 1000) {
+        interval.value = timeModel.sessionNumber
+
+        list = arrayOf(timeModel.time, timeModel.timeInterval)
+
+    }
+
+    private fun initCountDown(totalTime: Long) {
+        countDownTimer = object : CountDownTimer(totalTime, 1000) {
 
             override fun onTick(millisUntilFinished: Long) {
                 pausedTime.value = millisUntilFinished
-                updateNotificationPeriodically()
+                setUpdateNotification()
+                startTime.value = TimerStatus.RESUME
             }
 
             override fun onFinish() {
-                startTime.value = TimerStatus.FINISH
-                stopForegroundService()
+                if (interval.value!! == 0) {
+                    startTime.value = TimerStatus.FINISH
+                    setUpdateNotification()
+                } else {
+                    interval.value = interval.value!! - 1
+                    startIntervalCounting()
+                }
             }
         }
     }
 
-    private fun startCounting() {
+    private fun setUpdateNotification() {
+            if(startInterval.value == false && startTime.value == TimerStatus.RESUME) {
+                updateNotificationPeriodically(
+                    "Time to relax!",
+                    "Take a break and drink some water..."
+                )
+            }else if (startInterval.value == true && startTime.value == TimerStatus.RESUME){
+                updateNotificationPeriodically(
+                    "Pomodoro Time:",
+                    convertInMinuteAndSeconds(pausedTime.value!!)
+                )
+            }else {
+                updateNotificationPeriodically(
+                    "Congratulations!",
+                    "You finish your ${convertInMinuteAndSeconds(totalTimeAtual.value!!)} pomodoro session"
+                )
+            }
+    }
+
+    private fun startCounting(value: Long) {
+        totalTimeAtual.value = value
+        initCountDown(value)
+        Log.d("IntervalValue", interval.value!!.toString())
         countDownTimer.start()
-        startTime.value = TimerStatus.RESUME
+    }
+
+    private fun startIntervalCounting() {
+        startInterval.value = if(startInterval.value == true){
+            startCounting(list[1])
+            false
+        }else{
+            startCounting(list[0])
+            true
+        }
+        Log.d("StatusInterval", startInterval.value!!.toString())
     }
 
     private fun stopCounting() {
@@ -108,11 +163,11 @@ class TimerService: LifecycleService() {
     }
 
 
-    fun updateNotificationPeriodically() {
+    fun updateNotificationPeriodically(title: String, text: String) {
         notification.apply {
             setSmallIcon(R.drawable.ic_time)
-            setContentTitle("Pomodoro Time: ")
-            setContentText(convertInMinuteAndSeconds(pausedTime.value!!))
+            setContentTitle(title)
+            setContentText(text)
             priority = NotificationCompat.PRIORITY_LOW
             setContentIntent(pendingIntent)
         }

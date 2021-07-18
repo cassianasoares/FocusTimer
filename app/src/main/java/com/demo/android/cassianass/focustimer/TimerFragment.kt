@@ -18,7 +18,6 @@ import com.demo.android.cassianass.focustimer.service.TimerService
 import com.demo.android.cassianass.focustimer.util.Constant.ACTION_SERVICE_START
 import com.demo.android.cassianass.focustimer.util.Constant.ACTION_SERVICE_STOP
 import com.demo.android.cassianass.focustimer.viewmodel.SharedViewModel
-import java.sql.Time
 
 
 class TimerFragment : Fragment() {
@@ -30,6 +29,7 @@ class TimerFragment : Fragment() {
 
     var timeLive = MutableLiveData<Long>(90000)
     var timeTotal=  MutableLiveData<Long>(90000)
+    var interval=  MutableLiveData(1)
     lateinit var timeModel: TimeModel
     var startTime = MutableLiveData(TimerStatus.START)
 
@@ -56,8 +56,10 @@ class TimerFragment : Fragment() {
 
         sharedViewModel.timeModel.observe(viewLifecycleOwner, {newTime ->
             timeModel = newTime
-            timeTotal.value = newTime.time
             Log.d("TimeTotalFrag", timeTotal.toString())
+        })
+        TimerService.totalTimeAtual.observe(viewLifecycleOwner, {total ->
+            timeTotal.value = total
         })
         TimerService.pausedTime.observe(viewLifecycleOwner, {atualTime ->
             if (atualTime != null) {
@@ -69,6 +71,10 @@ class TimerFragment : Fragment() {
         TimerService.startTime.observe(viewLifecycleOwner, { status ->
             startTime.value = status
             Log.d("Status", status.toString())
+        })
+        TimerService.interval.observe(viewLifecycleOwner, { countDownInterval ->
+            interval.value = countDownInterval
+            Log.d("Status", countDownInterval.toString())
         })
         super.onViewCreated(view, savedInstanceState)
     }

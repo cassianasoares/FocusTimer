@@ -66,7 +66,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            app:selectionRequired="false"
+            app:checkedChip="@id/session1_chip"
+            app:selectionRequired="true"
             app:singleSelection="true">
 
             <com.google.android.material.chip.Chip

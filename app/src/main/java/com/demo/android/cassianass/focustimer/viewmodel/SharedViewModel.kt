@@ -7,7 +7,7 @@ import com.demo.android.cassianass.focustimer.model.TimeModel
 
 class SharedViewModel: ViewModel() {
 
-    var timeModel = MutableLiveData(TimeModel(90000, 1000, 0))
+    var timeModel = MutableLiveData(TimeModel(90000, 1000, 1))
 
     fun setNewTimer(newTime: TimeModel){
         timeModel.value = newTime

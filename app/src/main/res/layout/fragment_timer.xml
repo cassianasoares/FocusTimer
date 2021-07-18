@@ -14,13 +14,27 @@
         android:layout_height="match_parent"
         tools:context=".TimerFragment">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:text="INTERVAL TIME"
+            intervalNumber="@{fragmentTimer.interval}"
+            statusForVisibility="@{fragmentTimer.startTime}"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/progress_bar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent" />
+
         <ProgressBar
             android:id="@+id/progress_bar"
             style="@style/CircularDeterminateProgressBar"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
             timeCurrent="@{fragmentTimer.timeLive}"
             timeTotal="@{fragmentTimer.timeTotal}"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -29,9 +43,9 @@
 
         <TextView
             android:id="@+id/timerProgress_textView"
+            convertInMinuteAndSeconds="@{fragmentTimer.timeLive}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            convertInMinuteAndSeconds="@{fragmentTimer.timeLive}"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             app:layout_constraintBottom_toBottomOf="@+id/progress_bar"
             app:layout_constraintEnd_toEndOf="@+id/progress_bar"
@@ -40,14 +54,13 @@
 
         <Button
             android:id="@+id/start_button"
+            changeType="@{fragmentTimer.startTime}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            changeType="@{fragmentTimer.startTime}"
             android:onClick="@{() -> fragmentTimer.sendActionCommandToService(fragmentTimer.startTime)}"
             app:layout_constraintEnd_toEndOf="@+id/progress_bar"
             app:layout_constraintStart_toStartOf="@+id/progress_bar"
             app:layout_constraintTop_toBottomOf="@+id/progress_bar" />
-
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
