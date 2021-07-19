@@ -16,10 +16,7 @@ fun Button.changeType(startTime: TimerStatus){
         TimerStatus.START -> {
             setConfiguration("START", R.color.purple_500)
         }
-        TimerStatus.RESUME -> {
-            setConfiguration("STOP", R.color.purple_200)
-        }
-        TimerStatus.FINISH-> {
+        else-> {
             setConfiguration("RESTART", R.color.teal_200)
         }
     }
@@ -28,6 +25,16 @@ fun Button.changeType(startTime: TimerStatus){
 private fun Button.setConfiguration(text: String, color:Int ) {
     this.text = text
     this.setBackgroundColor(ContextCompat.getColor(context, color))
+}
+
+@BindingAdapter("buttonStartVisibility")
+fun Button.buttonStartVisibility(startTime: TimerStatus){
+    this.visibility = if(startTime == TimerStatus.RESUME) View.GONE else View.VISIBLE
+}
+
+@BindingAdapter("buttonStopVisibility")
+fun Button.buttonStopVisibility(startTime: TimerStatus){
+    this.visibility = if(startTime == TimerStatus.START) View.GONE else View.VISIBLE
 }
 
 @BindingAdapter("convertInMinuteAndSeconds")
@@ -42,8 +49,8 @@ fun ProgressBar.convertTimeToPorcentage(millisAtual: Long, millisTotal: Long) {
     this.progress = (timeInt.toInt() * 100) / timeTotal.toInt()
 }
 
-@BindingAdapter("intervalNumber", "statusForVisibility", requireAll = true)
-fun TextView.intervalVisibility(intervalNumber: Int, status: TimerStatus){
-    this.visibility = if(intervalNumber > 0 && status == TimerStatus.FINISH) View.VISIBLE else View.INVISIBLE
+@BindingAdapter("statusInterval", "statusTimer", requireAll = true)
+fun TextView.intervalVisibility(status: Boolean, startTime: TimerStatus){
+    this.visibility = if(!status && startTime != TimerStatus.FINISH) View.VISIBLE else View.INVISIBLE
 }
 

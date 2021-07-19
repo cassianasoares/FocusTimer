@@ -17,9 +17,9 @@ object ExtensionFunctions {
     fun ChipGroup.getSelectedSession(): Int{
         return when(this.checkedChipId){
             R.id.session1_chip-> 1
-            R.id.session2_chip -> 2
-            R.id.session3_chip -> 3
-            else -> 4
+            R.id.session2_chip -> 3
+            R.id.session3_chip -> 4
+            else -> 5
         }
     }
 

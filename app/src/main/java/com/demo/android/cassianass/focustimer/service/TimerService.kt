@@ -33,15 +33,14 @@ class TimerService: LifecycleService() {
     private lateinit var pendingIntent: PendingIntent
     private lateinit var countDownTimer : CountDownTimer
     private lateinit var timeModel: TimeModel
-    private var startInterval = MutableLiveData(true)
-    private var list = arrayOf<Long>()
+    private var interval: Int? = null
 
 
     companion object {
         var startTime = MutableLiveData(TimerStatus.START)
         var totalTimeAtual = MutableLiveData<Long>()
         var pausedTime = MutableLiveData<Long>()
-        var interval=  MutableLiveData<Int>()
+        var startInterval = MutableLiveData(true)
     }
 
     override fun onCreate() {
@@ -67,7 +66,7 @@ class TimerService: LifecycleService() {
                 ACTION_SERVICE_START -> {
                     startForegroundService()
                     setTimerValues(it)
-                    startCounting(list[0])
+                    startCounting(timeModel.time)
                 }
                 ACTION_SERVICE_REDEFINED -> {
                     stopForegroundService()
@@ -93,10 +92,7 @@ class TimerService: LifecycleService() {
         timeModel= intent!!.getParcelableExtra("timeValue")!!
         totalTimeAtual.value = timeModel.time
         pausedTime.value = timeModel.time
-        interval.value = timeModel.sessionNumber
-
-        list = arrayOf(timeModel.time, timeModel.timeInterval)
-
+        interval = timeModel.sessionNumber
     }
 
     private fun initCountDown(totalTime: Long) {
@@ -109,12 +105,12 @@ class TimerService: LifecycleService() {
             }
 
             override fun onFinish() {
-                if (interval.value!! == 0) {
-                    startTime.value = TimerStatus.FINISH
+                if (interval == 0) {
+                    stopCounting()
                     setUpdateNotification()
                 } else {
-                    interval.value = interval.value!! - 1
                     startIntervalCounting()
+                    interval= interval!! - 1
                 }
             }
         }
@@ -134,7 +130,7 @@ class TimerService: LifecycleService() {
             }else {
                 updateNotificationPeriodically(
                     "Congratulations!",
-                    "You finish your ${convertInMinuteAndSeconds(totalTimeAtual.value!!)} pomodoro session"
+                    "You finish your ${convertInMinuteAndSeconds(timeModel.time)} pomodoro session"
                 )
             }
     }
@@ -142,24 +138,26 @@ class TimerService: LifecycleService() {
     private fun startCounting(value: Long) {
         totalTimeAtual.value = value
         initCountDown(value)
-        Log.d("IntervalValue", interval.value!!.toString())
+        Log.d("IntervalValue", interval.toString())
         countDownTimer.start()
     }
 
     private fun startIntervalCounting() {
         startInterval.value = if(startInterval.value == true){
-            startCounting(list[1])
+            startCounting(timeModel.timeInterval)
             false
         }else{
-            startCounting(list[0])
+            startCounting(timeModel.time)
             true
         }
         Log.d("StatusInterval", startInterval.value!!.toString())
     }
 
     private fun stopCounting() {
+        startInterval.value = true
         countDownTimer.cancel()
         startTime.value = TimerStatus.FINISH
+
     }
 
 

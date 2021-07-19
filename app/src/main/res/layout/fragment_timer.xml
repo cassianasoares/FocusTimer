@@ -15,12 +15,12 @@
         tools:context=".TimerFragment">
 
         <TextView
+            statusInterval="@{fragmentTimer.startInterval}"
+            statusTimer="@{fragmentTimer.startTime}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
             android:text="INTERVAL TIME"
-            intervalNumber="@{fragmentTimer.interval}"
-            statusForVisibility="@{fragmentTimer.startTime}"
             android:textSize="26sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/progress_bar"
@@ -54,13 +54,26 @@
 
         <Button
             android:id="@+id/start_button"
+            buttonStartVisibility="@{fragmentTimer.startTime}"
             changeType="@{fragmentTimer.startTime}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="@{() -> fragmentTimer.sendActionCommandToService(fragmentTimer.startTime)}"
+            android:onClick="@{() -> fragmentTimer.buttonStartAction(fragmentTimer.startTime)}"
             app:layout_constraintEnd_toEndOf="@+id/progress_bar"
             app:layout_constraintStart_toStartOf="@+id/progress_bar"
             app:layout_constraintTop_toBottomOf="@+id/progress_bar" />
+
+        <Button
+            android:id="@+id/stop_button"
+            buttonStopVisibility="@{fragmentTimer.startTime}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{() -> fragmentTimer.buttonStopAction(fragmentTimer.startTime)}"
+            android:text="@string/stop_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/start_button" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

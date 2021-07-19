@@ -29,9 +29,9 @@ class TimerFragment : Fragment() {
 
     var timeLive = MutableLiveData<Long>(90000)
     var timeTotal=  MutableLiveData<Long>(90000)
-    var interval=  MutableLiveData(1)
     lateinit var timeModel: TimeModel
     var startTime = MutableLiveData(TimerStatus.START)
+    var startInterval = MutableLiveData(true)
 
 
     override fun onCreateView(
@@ -72,17 +72,28 @@ class TimerFragment : Fragment() {
             startTime.value = status
             Log.d("Status", status.toString())
         })
-        TimerService.interval.observe(viewLifecycleOwner, { countDownInterval ->
-            interval.value = countDownInterval
-            Log.d("Status", countDownInterval.toString())
+        TimerService.startInterval.observe(viewLifecycleOwner, { intervalStatus ->
+            startInterval.value = intervalStatus
+            Log.d("Status", intervalStatus.toString())
         })
         super.onViewCreated(view, savedInstanceState)
     }
 
 
-    fun sendActionCommandToService(status: TimerStatus){
-        val action = if(status == TimerStatus.RESUME) ACTION_SERVICE_STOP else ACTION_SERVICE_START
+    fun buttonStartAction(status: TimerStatus){
+        if(status != TimerStatus.RESUME || status == TimerStatus.FINISH){
+            sendActionCommandToService(ACTION_SERVICE_START)
+        }
+    }
 
+    fun buttonStopAction(status: TimerStatus){
+        if(status == TimerStatus.RESUME || status == TimerStatus.FINISH) {
+            sendActionCommandToService(ACTION_SERVICE_STOP)
+        }
+    }
+
+
+    private fun sendActionCommandToService(action: String){
         Intent(
             requireContext(),
             TimerService::class.java
