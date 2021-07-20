@@ -15,9 +15,11 @@ import com.demo.android.cassianass.focustimer.databinding.FragmentTimerBinding
 import com.demo.android.cassianass.focustimer.model.TimeModel
 import com.demo.android.cassianass.focustimer.model.TimerStatus
 import com.demo.android.cassianass.focustimer.service.TimerService
+import com.demo.android.cassianass.focustimer.util.Constant.ACTION_SERVICE_REDEFINED
 import com.demo.android.cassianass.focustimer.util.Constant.ACTION_SERVICE_START
 import com.demo.android.cassianass.focustimer.util.Constant.ACTION_SERVICE_STOP
 import com.demo.android.cassianass.focustimer.viewmodel.SharedViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 
 class TimerFragment : Fragment() {
@@ -27,11 +29,12 @@ class TimerFragment : Fragment() {
 
     private val sharedViewModel: SharedViewModel by activityViewModels()
 
-    var timeLive = MutableLiveData<Long>(90000)
-    var timeTotal=  MutableLiveData<Long>(90000)
-    lateinit var timeModel: TimeModel
+    var timeLive = MutableLiveData<Long>(1500000)
+    var timeTotal=  MutableLiveData<Long>(1500000)
+    var timeModel = TimeModel(1500000, 300000, 1)
     var startTime = MutableLiveData(TimerStatus.START)
-    var startInterval = MutableLiveData(true)
+    var startInterval = MutableLiveData(false)
+    var interval = MutableLiveData(0)
 
 
     override fun onCreateView(
@@ -45,7 +48,7 @@ class TimerFragment : Fragment() {
         binding.lifecycleOwner = this
 
 
-        binding.timerProgressTextView.setOnClickListener {
+        binding.changeTimeButton.setOnClickListener {
             findNavController().navigate(R.id.action_timerFragment_to_setTimeFragment)
         }
 
@@ -55,11 +58,18 @@ class TimerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         sharedViewModel.timeModel.observe(viewLifecycleOwner, {newTime ->
-            timeModel = newTime
-            Log.d("TimeTotalFrag", timeTotal.toString())
+            if (newTime != null) {
+                timeModel = newTime
+                Log.d("TimeTotalFrag", timeTotal.toString())
+            }
         })
         TimerService.totalTimeAtual.observe(viewLifecycleOwner, {total ->
             timeTotal.value = total
+        })
+        TimerService.isFinish.observe(viewLifecycleOwner, {statusFinish ->
+            if (statusFinish == true){
+                showDialogWhenCompletePomodoro()
+            }
         })
         TimerService.pausedTime.observe(viewLifecycleOwner, {atualTime ->
             if (atualTime != null) {
@@ -68,27 +78,57 @@ class TimerFragment : Fragment() {
                 timeLive.value = timeTotal.value
             }
         })
+        TimerService.countInterval.observe(viewLifecycleOwner, { numberInterval ->
+            interval.value = numberInterval!!
+        })
         TimerService.startTime.observe(viewLifecycleOwner, { status ->
             startTime.value = status
             Log.d("Status", status.toString())
         })
-        TimerService.startInterval.observe(viewLifecycleOwner, { intervalStatus ->
+        TimerService.isInterval.observe(viewLifecycleOwner, { intervalStatus ->
             startInterval.value = intervalStatus
             Log.d("Status", intervalStatus.toString())
         })
         super.onViewCreated(view, savedInstanceState)
     }
 
-
-    fun buttonStartAction(status: TimerStatus){
-        if(status != TimerStatus.RESUME || status == TimerStatus.FINISH){
-            sendActionCommandToService(ACTION_SERVICE_START)
+    fun showCancelCurrentTimeAlertDialog(status: TimerStatus){
+        if (status == TimerStatus.RESUME) {
+            MaterialAlertDialogBuilder(requireContext())
+                .setMessage("Do you really want to shop the current timer?")
+                .setNegativeButton("Cancel") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .setPositiveButton("Continue") { dialog, _ ->
+                    buttonActionCommandToService(status)
+                    dialog.dismiss()
+                }
+                .show()
+        }else{
+            buttonActionCommandToService(status)
         }
     }
 
-    fun buttonStopAction(status: TimerStatus){
-        if(status == TimerStatus.RESUME || status == TimerStatus.FINISH) {
-            sendActionCommandToService(ACTION_SERVICE_STOP)
+    private fun showDialogWhenCompletePomodoro(){
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Congratulations")
+            .setMessage("You finish your pomodoro session!! Do you want restart the session?")
+            .setNegativeButton("FINISH"){dialog, _ ->
+                sendActionCommandToService(ACTION_SERVICE_REDEFINED)
+                dialog.dismiss()
+            }
+            .setPositiveButton("RESTART"){dialog, _ ->
+                sendActionCommandToService(ACTION_SERVICE_START)
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun buttonActionCommandToService(status: TimerStatus){
+        when(status){
+            TimerStatus.START -> sendActionCommandToService(ACTION_SERVICE_START)
+            TimerStatus.RESUME -> sendActionCommandToService(ACTION_SERVICE_STOP)
+            TimerStatus.FINISH -> sendActionCommandToService(ACTION_SERVICE_REDEFINED)
         }
     }
 

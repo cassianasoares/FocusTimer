@@ -2,39 +2,26 @@ package com.demo.android.cassianass.focustimer.bindingadapter
 
 import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.demo.android.cassianass.focustimer.R
+import com.demo.android.cassianass.focustimer.model.TimeModel
 import com.demo.android.cassianass.focustimer.model.TimerStatus
 import com.demo.android.cassianass.focustimer.util.Constant.convertInMinuteAndSeconds
 
 @BindingAdapter("changeType")
-fun Button.changeType(startTime: TimerStatus){
+fun ImageButton.changeType(startTime: TimerStatus){
     when(startTime) {
         TimerStatus.START -> {
-            setConfiguration("START", R.color.purple_500)
+            this.setImageResource(R.drawable.ic_play)
         }
         else-> {
-            setConfiguration("RESTART", R.color.teal_200)
+            this.setImageResource(R.drawable.ic_stop)
         }
     }
-}
-
-private fun Button.setConfiguration(text: String, color:Int ) {
-    this.text = text
-    this.setBackgroundColor(ContextCompat.getColor(context, color))
-}
-
-@BindingAdapter("buttonStartVisibility")
-fun Button.buttonStartVisibility(startTime: TimerStatus){
-    this.visibility = if(startTime == TimerStatus.RESUME) View.GONE else View.VISIBLE
-}
-
-@BindingAdapter("buttonStopVisibility")
-fun Button.buttonStopVisibility(startTime: TimerStatus){
-    this.visibility = if(startTime == TimerStatus.START) View.GONE else View.VISIBLE
 }
 
 @BindingAdapter("convertInMinuteAndSeconds")
@@ -50,7 +37,18 @@ fun ProgressBar.convertTimeToPorcentage(millisAtual: Long, millisTotal: Long) {
 }
 
 @BindingAdapter("statusInterval", "statusTimer", requireAll = true)
-fun TextView.intervalVisibility(status: Boolean, startTime: TimerStatus){
-    this.visibility = if(!status && startTime != TimerStatus.FINISH) View.VISIBLE else View.INVISIBLE
+fun TextView.changeStatusSession(status: Boolean, startTime: TimerStatus){
+    this.text = (if(status && startTime == TimerStatus.RESUME) {
+                    "Break"
+                }else{
+                when (startTime) {
+                    TimerStatus.FINISH -> "Finish"
+                    else -> "Focusing"
+                }}
+            ).toString()
 }
 
+@BindingAdapter("currentInterval","totalInterval", requireAll = true)
+fun TextView.setIntervalCounting(currentInterval: Int, totalInterval: TimeModel){
+    this.text = "${currentInterval} / ${totalInterval.sessionNumber}"
+}

@@ -24,6 +24,7 @@ import com.demo.android.cassianass.focustimer.util.Constant.NOTIFICATION_CHANNEL
 import com.demo.android.cassianass.focustimer.util.Constant.NOTIFICATION_CHANNEL_NAME
 import com.demo.android.cassianass.focustimer.util.Constant.NOTIFICATION_ID
 import com.demo.android.cassianass.focustimer.util.Constant.convertInMinuteAndSeconds
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class TimerService: LifecycleService() {
 
@@ -33,14 +34,14 @@ class TimerService: LifecycleService() {
     private lateinit var pendingIntent: PendingIntent
     private lateinit var countDownTimer : CountDownTimer
     private lateinit var timeModel: TimeModel
-    private var interval: Int? = null
-
 
     companion object {
         var startTime = MutableLiveData(TimerStatus.START)
         var totalTimeAtual = MutableLiveData<Long>()
         var pausedTime = MutableLiveData<Long>()
-        var startInterval = MutableLiveData(true)
+        var isInterval = MutableLiveData(false)
+        var countInterval= MutableLiveData(0)
+        var isFinish = MutableLiveData(false)
     }
 
     override fun onCreate() {
@@ -92,7 +93,8 @@ class TimerService: LifecycleService() {
         timeModel= intent!!.getParcelableExtra("timeValue")!!
         totalTimeAtual.value = timeModel.time
         pausedTime.value = timeModel.time
-        interval = timeModel.sessionNumber
+        countInterval.value = 0
+        isFinish.value = false
     }
 
     private fun initCountDown(totalTime: Long) {
@@ -105,24 +107,24 @@ class TimerService: LifecycleService() {
             }
 
             override fun onFinish() {
-                if (interval == 0) {
+                if (countInterval.value == timeModel.sessionNumber) {
                     stopCounting()
+                    isFinish.value = true
                     setUpdateNotification()
                 } else {
                     startIntervalCounting()
-                    interval= interval!! - 1
                 }
             }
         }
     }
 
     private fun setUpdateNotification() {
-            if(startInterval.value == false && startTime.value == TimerStatus.RESUME) {
+            if(isInterval.value == true && startTime.value == TimerStatus.RESUME) {
                 updateNotificationPeriodically(
                     "Time to relax!",
                     "Take a break and drink some water..."
                 )
-            }else if (startInterval.value == true && startTime.value == TimerStatus.RESUME){
+            }else if (isInterval.value == false && startTime.value == TimerStatus.RESUME){
                 updateNotificationPeriodically(
                     "Pomodoro Time:",
                     convertInMinuteAndSeconds(pausedTime.value!!)
@@ -138,30 +140,35 @@ class TimerService: LifecycleService() {
     private fun startCounting(value: Long) {
         totalTimeAtual.value = value
         initCountDown(value)
-        Log.d("IntervalValue", interval.toString())
+        Log.d("IntervalValue", countInterval.toString())
         countDownTimer.start()
     }
 
     private fun startIntervalCounting() {
-        startInterval.value = if(startInterval.value == true){
-            startCounting(timeModel.timeInterval)
-            false
+        isInterval.value = if(isInterval.value == false){
+            if(timeModel.sessionNumber == 4 && countInterval.value == 3) {
+                startCounting(1800000)
+            }else{
+                startCounting(timeModel.timeInterval)
+            }
+            countInterval.value= countInterval.value!! + 1
+            true
         }else{
             startCounting(timeModel.time)
-            true
+            false
         }
-        Log.d("StatusInterval", startInterval.value!!.toString())
+        Log.d("StatusInterval", isInterval.value!!.toString())
     }
 
     private fun stopCounting() {
-        startInterval.value = true
+        isInterval.value = false
         countDownTimer.cancel()
         startTime.value = TimerStatus.FINISH
 
     }
 
 
-    fun updateNotificationPeriodically(title: String, text: String) {
+    private fun updateNotificationPeriodically(title: String, text: String) {
         notification.apply {
             setSmallIcon(R.drawable.ic_time)
             setContentTitle(title)
@@ -201,4 +208,6 @@ class TimerService: LifecycleService() {
             notificationManager.createNotificationChannel(channel)
         }
     }
+
+
 }

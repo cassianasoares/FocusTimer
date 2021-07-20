@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    <LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".SetTimeFragment"
-    android:orientation="vertical">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context=".SetTimeFragment"
+        android:background="@drawable/background_app"
+        android:padding="24dp"
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
@@ -13,15 +17,12 @@
             android:text="Tempo do Pomodoro:"
             android:textStyle="bold"
             android:textSize="16sp"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp"
             android:layout_marginBottom="8dp" />
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/time_chipGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             app:selectionRequired="true"
             app:singleSelection="true"
             app:checkedChip="@+id/time25_chip">
@@ -57,7 +58,6 @@
             android:text="Quantidade de Sessões:"
             android:textStyle="bold"
             android:textSize="16sp"
-            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp" />
 
@@ -65,7 +65,6 @@
             android:id="@+id/session_chipGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             app:checkedChip="@id/session1_chip"
             app:selectionRequired="true"
             app:singleSelection="true">
@@ -74,32 +73,35 @@
                 android:id="@+id/session1_chip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1 Sessão" />
+                android:text="1X" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/session2_chip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="2 Sessões" />
+                android:text="2X" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/session3_chip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="3 Sessões" />
+                android:text="3X" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/session4_chip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="4 Sessões" />
+                android:text="4X" />
         </com.google.android.material.chip.ChipGroup>
 
         <Button
             android:id="@+id/setNewTime_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Start"
-            android:layout_margin="16dp" />
+            android:text="Apply"
+            android:textColor="@color/white"
+            app:backgroundTint="@null"
+            android:background="@color/orange"
+            android:layout_marginTop="16dp" />
 
     </LinearLayout>

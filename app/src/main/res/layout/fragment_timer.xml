@@ -12,21 +12,48 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/background_app"
         tools:context=".TimerFragment">
 
         <TextView
+            android:id="@+id/appName_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="Focus Timer"
+            android:textColor="@color/orange"
+            android:textSize="24sp"
+            android:textStyle="bold|italic"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/titleTimeStatus_textView"
             statusInterval="@{fragmentTimer.startInterval}"
             statusTimer="@{fragmentTimer.startTime}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
-            android:text="INTERVAL TIME"
-            android:textSize="26sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/progress_bar"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:textColor="@color/orange"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/progress_bar"
+            app:layout_constraintEnd_toEndOf="@+id/progress_bar"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="@+id/progress_bar"
+            app:layout_constraintTop_toTopOf="@+id/progress_bar"
+            app:layout_constraintVertical_bias="0.29000002" />
+
+        <View
+            android:id="@+id/background_panel"
+            android:layout_width="260dp"
+            android:layout_height="260dp"
+            android:background="@drawable/background_panel_progressbar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appName_textView"
+            app:layout_constraintVertical_bias="0.25" />
 
         <ProgressBar
             android:id="@+id/progress_bar"
@@ -39,7 +66,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.37" />
 
         <TextView
             android:id="@+id/timerProgress_textView"
@@ -47,33 +75,59 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@color/white"
+            android:textSize="36sp"
             app:layout_constraintBottom_toBottomOf="@+id/progress_bar"
             app:layout_constraintEnd_toEndOf="@+id/progress_bar"
             app:layout_constraintStart_toStartOf="@+id/progress_bar"
-            app:layout_constraintTop_toTopOf="@+id/progress_bar" />
+            app:layout_constraintTop_toTopOf="@+id/progress_bar"
+            app:layout_constraintVertical_bias="0.51" />
 
-        <Button
+        <TextView
+            android:id="@+id/interval_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            currentInterval="@{fragmentTimer.interval}"
+            totalInterval = "@{fragmentTimer.timeModel}"
+            android:textColor="@color/orange"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/progress_bar"
+            app:layout_constraintEnd_toEndOf="@+id/progress_bar"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/progress_bar"
+            app:layout_constraintTop_toBottomOf="@+id/timerProgress_textView"
+            app:layout_constraintVertical_bias="0.07999998" />
+
+        <ImageButton
             android:id="@+id/start_button"
-            buttonStartVisibility="@{fragmentTimer.startTime}"
             changeType="@{fragmentTimer.startTime}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="@{() -> fragmentTimer.buttonStartAction(fragmentTimer.startTime)}"
+            android:background="@drawable/background_buttons"
+            android:onClick="@{() -> fragmentTimer.showCancelCurrentTimeAlertDialog(fragmentTimer.startTime)}"
+            app:backgroundTint="@null"
             app:layout_constraintEnd_toEndOf="@+id/progress_bar"
             app:layout_constraintStart_toStartOf="@+id/progress_bar"
-            app:layout_constraintTop_toBottomOf="@+id/progress_bar" />
+            app:layout_constraintTop_toBottomOf="@+id/background_panel" />
+
 
         <Button
-            android:id="@+id/stop_button"
-            buttonStopVisibility="@{fragmentTimer.startTime}"
+            android:id="@+id/changeTime_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="@{() -> fragmentTimer.buttonStopAction(fragmentTimer.startTime)}"
-            android:text="@string/stop_button"
+            android:layout_marginBottom="16dp"
+            android:drawableLeft="@drawable/ic_time"
+            android:text="Change pomodoro time"
+            android:textColor="@color/orange"
+            android:textSize="12sp"
+            app:backgroundTint="@null"
+            android:background="@drawable/background_button_choose_time"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/start_button" />
+            app:layout_constraintTop_toBottomOf="@+id/start_button"
+            app:layout_constraintVertical_bias="1.0" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

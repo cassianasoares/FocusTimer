@@ -2,6 +2,16 @@
 <resources>
     <style name="CircularDeterminateProgressBar">
         <item name="android:indeterminateOnly">false</item>
-        <item name="android:progressDrawable">@drawable/circle</item>
+        <item name="android:progressDrawable">@drawable/progressbar_background</item>
+    </style>
+
+    <style name="ChipStyle" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/text_chip_color</item>
+        <item name="chipStrokeColor">@color/orange</item>
+        <item name="chipStrokeWidth">2dp</item>
+        <item name="chipCornerRadius">4dp</item>
+        <item name="chipBackgroundColor">@color/background_chip_color</item>
     </style>
 </resources>
