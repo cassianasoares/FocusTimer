@@ -37,9 +37,9 @@ class TimerService: LifecycleService() {
     private lateinit var timeModel: TimeModel
 
     companion object {
-        var startTime = MutableLiveData(TimerStatus.START)
+        var statusTime = MutableLiveData(TimerStatus.START)
         var currentTotalTime = MutableLiveData<Long>()
-        var pausedTime = MutableLiveData<Long>()
+        var currentTime = MutableLiveData<Long>()
         var isInterval = MutableLiveData(false)
         var countInterval= MutableLiveData(0)
         var isFinish = MutableLiveData(false)
@@ -56,16 +56,16 @@ class TimerService: LifecycleService() {
                 }
                 ACTION_SERVICE_REDEFINED -> {
                     stopForegroundService()
-                    if(startTime.value == TimerStatus.RESUME) {
+                    if(statusTime.value == TimerStatus.RESUME) {
                         stopCounting()
                     }
                     setTimerValues(it)
-                    startTime.value = TimerStatus.START
+                    statusTime.value = TimerStatus.START
                 }
                 ACTION_SERVICE_STOP ->{
                     stopForegroundService()
                     stopCounting()
-                    pausedTime.value = 0
+                    currentTime.value = 0
                 }
                 else -> { }
             }
@@ -77,7 +77,7 @@ class TimerService: LifecycleService() {
     private fun setTimerValues(intent: Intent?){
         timeModel= intent!!.getParcelableExtra("timeValue")!!
         currentTotalTime.value = timeModel.time
-        pausedTime.value = timeModel.time
+        currentTime.value = timeModel.time
         countInterval.value = 0
         isFinish.value = false
     }
@@ -86,9 +86,9 @@ class TimerService: LifecycleService() {
         countDownTimer = object : CountDownTimer(totalTime, 1000) {
 
             override fun onTick(millisUntilFinished: Long) {
-                pausedTime.value = millisUntilFinished
+                currentTime.value = millisUntilFinished
                 setUpdateNotification()
-                startTime.value = TimerStatus.RESUME
+                statusTime.value = TimerStatus.RESUME
             }
 
             override fun onFinish() {
@@ -104,15 +104,15 @@ class TimerService: LifecycleService() {
     }
 
     private fun setUpdateNotification() {
-            if(isInterval.value == true && startTime.value == TimerStatus.RESUME) {
+            if(isInterval.value == true && statusTime.value == TimerStatus.RESUME) {
                 updateNotificationPeriodically(
                     "Time to relax!",
                     "Take a break and drink some water..."
                 )
-            }else if (isInterval.value == false && startTime.value == TimerStatus.RESUME){
+            }else if (isInterval.value == false && statusTime.value == TimerStatus.RESUME){
                 updateNotificationPeriodically(
                     "Pomodoro Time:",
-                    convertInMinuteAndSeconds(pausedTime.value!!)
+                    convertInMinuteAndSeconds(currentTime.value!!)
                 )
             }else {
                 updateNotificationPeriodically(
@@ -148,7 +148,7 @@ class TimerService: LifecycleService() {
     private fun stopCounting() {
         isInterval.value = false
         countDownTimer.cancel()
-        startTime.value = TimerStatus.FINISH
+        statusTime.value = TimerStatus.FINISH
 
     }
 

@@ -27,11 +27,11 @@ class TimerFragment : Fragment() {
     private val binding get() = _binding!!
 
     var timeModel = TimeModel(1500000, 300000, 1)
-    var timeLive = MutableLiveData(timeModel.time)
-    var timeTotal= MutableLiveData(timeModel.time)
-    var startTime = MutableLiveData(TimerStatus.START)
-    var startInterval = MutableLiveData(false)
-    var interval = MutableLiveData(0)
+    var currentTime = MutableLiveData(timeModel.time)
+    var currentTotalTime= MutableLiveData(timeModel.time)
+    var statusTime = MutableLiveData(TimerStatus.START)
+    var isInterval = MutableLiveData(false)
+    var countInterval = MutableLiveData(0)
 
 
     override fun onCreateView(
@@ -57,7 +57,6 @@ class TimerFragment : Fragment() {
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<TimeModel>("timer")?.observe(viewLifecycleOwner){ newTime ->
             if (newTime != null) {
                 timeModel = newTime
-                Log.d("TimeTotalFrag", timeTotal.toString())
             }
         }
         observeService()
@@ -66,29 +65,29 @@ class TimerFragment : Fragment() {
 
     private fun observeService() {
         TimerService.currentTotalTime.observe(viewLifecycleOwner, { total ->
-            timeTotal.value = total
+            currentTotalTime.value = total
         })
         TimerService.isFinish.observe(viewLifecycleOwner, { statusFinish ->
             if (statusFinish == true) {
                 showDialogWhenCompletePomodoro()
             }
         })
-        TimerService.pausedTime.observe(viewLifecycleOwner, { atualTime ->
+        TimerService.currentTime.observe(viewLifecycleOwner, { atualTime ->
             if (atualTime != null) {
-                timeLive.value = atualTime
+                currentTime.value = atualTime
             } else {
-                timeLive.value = timeTotal.value
+                currentTime.value = currentTotalTime.value
             }
         })
         TimerService.countInterval.observe(viewLifecycleOwner, { numberInterval ->
-            interval.value = numberInterval!!
+            countInterval.value = numberInterval!!
         })
-        TimerService.startTime.observe(viewLifecycleOwner, { status ->
-            startTime.value = status
+        TimerService.statusTime.observe(viewLifecycleOwner, { status ->
+            statusTime.value = status
             Log.d("Status", status.toString())
         })
         TimerService.isInterval.observe(viewLifecycleOwner, { intervalStatus ->
-            startInterval.value = intervalStatus
+            isInterval.value = intervalStatus
             Log.d("Status", intervalStatus.toString())
         })
     }

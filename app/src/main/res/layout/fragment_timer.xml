@@ -31,8 +31,8 @@
 
         <TextView
             android:id="@+id/titleTimeStatus_textView"
-            statusInterval="@{fragmentTimer.startInterval}"
-            statusTimer="@{fragmentTimer.startTime}"
+            statusInterval="@{fragmentTimer.isInterval}"
+            statusTimer="@{fragmentTimer.statusTime}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/orange"
@@ -58,20 +58,20 @@
         <ProgressBar
             android:id="@+id/progress_bar"
             style="@style/CircularDeterminateProgressBar"
-            timeCurrent="@{fragmentTimer.timeLive}"
-            timeTotal="@{fragmentTimer.timeTotal}"
+            timeCurrent="@{fragmentTimer.currentTime}"
+            timeTotal="@{fragmentTimer.currentTotalTime}"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/background_panel"
+            app:layout_constraintEnd_toEndOf="@+id/background_panel"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.37" />
+            app:layout_constraintStart_toStartOf="@+id/background_panel"
+            app:layout_constraintTop_toTopOf="@+id/background_panel"
+            app:layout_constraintVertical_bias="0.5" />
 
         <TextView
             android:id="@+id/timerProgress_textView"
-            convertInMinuteAndSeconds="@{fragmentTimer.timeLive}"
+            convertInMinuteAndSeconds="@{fragmentTimer.currentTime}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
@@ -87,7 +87,7 @@
             android:id="@+id/interval_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            currentInterval="@{fragmentTimer.interval}"
+            currentInterval="@{fragmentTimer.countInterval}"
             totalInterval = "@{fragmentTimer.timeModel}"
             android:textColor="@color/orange"
             android:textSize="12sp"
@@ -100,11 +100,11 @@
 
         <ImageButton
             android:id="@+id/start_button"
-            changeType="@{fragmentTimer.startTime}"
+            changeType="@{fragmentTimer.statusTime}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/background_buttons"
-            android:onClick="@{() -> fragmentTimer.showCancelCurrentTimeAlertDialog(fragmentTimer.startTime)}"
+            android:onClick="@{() -> fragmentTimer.showCancelCurrentTimeAlertDialog(fragmentTimer.statusTime)}"
             app:backgroundTint="@null"
             app:layout_constraintEnd_toEndOf="@+id/progress_bar"
             app:layout_constraintStart_toStartOf="@+id/progress_bar"

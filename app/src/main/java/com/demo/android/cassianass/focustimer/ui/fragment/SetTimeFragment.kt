@@ -29,7 +29,7 @@ class SetTimeFragment : BottomSheetDialogFragment() {
     ): View {
         _binding = FragmentSetTimeBinding.inflate(inflater, container, false)
 
-        TimerService.startTime.observe(viewLifecycleOwner, { atualStatus ->
+        TimerService.statusTime.observe(viewLifecycleOwner, { atualStatus ->
             status = atualStatus
         })
 
