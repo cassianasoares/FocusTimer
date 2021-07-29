@@ -12,6 +12,8 @@ object Constant {
     const val NOTIFICATION_ID = 124
     const val NOTIFICATION_CHANNEL_NAME = "countdown_notification"
 
+    const val PENDING_INTENT_REQUEST_CODE = 0
+
     fun convertInMinuteAndSeconds(millis: Long): String {
         return String.format(
             "%02d:%02d",

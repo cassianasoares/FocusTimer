@@ -3,7 +3,6 @@ package com.demo.android.cassianass.focustimer.service
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -13,8 +12,6 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
-import com.demo.android.cassianass.focustimer.MainActivity
-import com.demo.android.cassianass.focustimer.R
 import com.demo.android.cassianass.focustimer.model.TimeModel
 import com.demo.android.cassianass.focustimer.model.TimerStatus
 import com.demo.android.cassianass.focustimer.util.Constant.ACTION_SERVICE_REDEFINED
@@ -24,41 +21,29 @@ import com.demo.android.cassianass.focustimer.util.Constant.NOTIFICATION_CHANNEL
 import com.demo.android.cassianass.focustimer.util.Constant.NOTIFICATION_CHANNEL_NAME
 import com.demo.android.cassianass.focustimer.util.Constant.NOTIFICATION_ID
 import com.demo.android.cassianass.focustimer.util.Constant.convertInMinuteAndSeconds
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class TimerService: LifecycleService() {
 
-    private lateinit var notification: NotificationCompat.Builder
-    private lateinit var notificationManager: NotificationManager
-    private lateinit var intent: Intent
-    private lateinit var pendingIntent: PendingIntent
+    @Inject
+    lateinit var notification: NotificationCompat.Builder
+
+    @Inject
+    lateinit var notificationManager: NotificationManager
+
     private lateinit var countDownTimer : CountDownTimer
     private lateinit var timeModel: TimeModel
 
     companion object {
         var startTime = MutableLiveData(TimerStatus.START)
-        var totalTimeAtual = MutableLiveData<Long>()
+        var currentTotalTime = MutableLiveData<Long>()
         var pausedTime = MutableLiveData<Long>()
         var isInterval = MutableLiveData(false)
         var countInterval= MutableLiveData(0)
         var isFinish = MutableLiveData(false)
     }
-
-    override fun onCreate() {
-
-        notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-
-        (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).also {
-            notificationManager = it
-        }
-
-        intent = Intent(this, MainActivity::class.java)
-        pendingIntent = PendingIntent.getActivity(this,0,intent,0)
-
-        createNotificationChannel()
-        super.onCreate()
-    }
-
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.let {
@@ -91,7 +76,7 @@ class TimerService: LifecycleService() {
 
     private fun setTimerValues(intent: Intent?){
         timeModel= intent!!.getParcelableExtra("timeValue")!!
-        totalTimeAtual.value = timeModel.time
+        currentTotalTime.value = timeModel.time
         pausedTime.value = timeModel.time
         countInterval.value = 0
         isFinish.value = false
@@ -138,7 +123,7 @@ class TimerService: LifecycleService() {
     }
 
     private fun startCounting(value: Long) {
-        totalTimeAtual.value = value
+        currentTotalTime.value = value
         initCountDown(value)
         Log.d("IntervalValue", countInterval.toString())
         countDownTimer.start()
@@ -170,17 +155,15 @@ class TimerService: LifecycleService() {
 
     private fun updateNotificationPeriodically(title: String, text: String) {
         notification.apply {
-            setSmallIcon(R.drawable.ic_time)
             setContentTitle(title)
             setContentText(text)
-            priority = NotificationCompat.PRIORITY_LOW
-            setContentIntent(pendingIntent)
         }
         notificationManager.notify(NOTIFICATION_ID, notification.build())
     }
 
 
     private fun startForegroundService() {
+        createNotificationChannel()
         startForeground(
             NOTIFICATION_ID,
             notification.build()

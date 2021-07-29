@@ -1,11 +1,10 @@
-package com.demo.android.cassianass.focustimer
+package com.demo.android.cassianass.focustimer.ui.fragment
 
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.demo.android.cassianass.focustimer.databinding.FragmentSetTimeBinding
 import com.demo.android.cassianass.focustimer.model.TimeModel
@@ -14,7 +13,6 @@ import com.demo.android.cassianass.focustimer.service.TimerService
 import com.demo.android.cassianass.focustimer.util.Constant.ACTION_SERVICE_REDEFINED
 import com.demo.android.cassianass.focustimer.util.ExtensionFunctions.getSelectedSession
 import com.demo.android.cassianass.focustimer.util.ExtensionFunctions.getSelectedTime
-import com.demo.android.cassianass.focustimer.viewmodel.SharedViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -23,7 +21,6 @@ class SetTimeFragment : BottomSheetDialogFragment() {
     private var _binding: FragmentSetTimeBinding? = null
     private val binding get() = _binding!!
 
-    private val sharedViewModel: SharedViewModel by activityViewModels()
     private lateinit var status : TimerStatus
 
     override fun onCreateView(
@@ -41,7 +38,7 @@ class SetTimeFragment : BottomSheetDialogFragment() {
             val checkedChipSessionGroup = binding.sessionChipGroup.getSelectedSession()
 
             val timer = TimeModel( checkedChipTimeGroup[0], checkedChipTimeGroup[1], checkedChipSessionGroup)
-            sharedViewModel.setNewTimer(timer)
+            findNavController().previousBackStackEntry?.savedStateHandle?.set("timer", timer)
 
             showCancelCurrentTimeAlertDialog(timer)
         }
